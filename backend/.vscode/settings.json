@@ -1,0 +1,8 @@
+{
+  "python.defaultInterpreterPath": "c:/agentic placement/backend/venv/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "c:/agentic placement/backend"
+  ],
+  "python.languageServer": "Pylance",
+  "python.analysis.typeCheckingMode": "off"
+}
