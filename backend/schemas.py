@@ -46,7 +46,7 @@ class ProjectResponse(ProjectBase):
 # ── INTERNSHIP SCHEMAS ────────────────────────────────────────
 class InternshipBase(BaseModel):
     company: str
-    role: str
+    role: Optional[str] = ""        # optional so empty internships don't 422
 
 class InternshipResponse(InternshipBase):
     id: str
@@ -58,20 +58,33 @@ class StudentProfileCreate(BaseModel):
     name: str
     department: str
     year: str
-    section: str
+    section: Optional[str] = ""     # optional — not everyone fills section
     cgpa: float
     leetcode_count: Optional[int] = 0
     hackerrank_score: Optional[int] = 0
     codechef_rating: Optional[int] = None
     codeforces_rating: Optional[int] = None
     resume_url: Optional[str] = None
-    certification_urls: Optional[List[str]] = []
-    skills: List[str] = []
+    certification_urls: Optional[str] = None   # DB stores as text, not list
+    skills: List[str] = []                     # plain strings ["Python","React"]
     projects: List[ProjectBase] = []
     internships: List[InternshipBase] = []
 
-class StudentProfileUpdate(StudentProfileCreate):
-    pass
+class StudentProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    department: Optional[str] = None
+    year: Optional[str] = None
+    section: Optional[str] = None
+    cgpa: Optional[float] = None
+    leetcode_count: Optional[int] = None
+    hackerrank_score: Optional[int] = None
+    codechef_rating: Optional[int] = None
+    codeforces_rating: Optional[int] = None
+    resume_url: Optional[str] = None
+    certification_urls: Optional[str] = None
+    skills: List[str] = []
+    projects: List[ProjectBase] = []
+    internships: List[InternshipBase] = []
 
 class StudentResponse(BaseModel):
     id: str
@@ -85,7 +98,7 @@ class StudentResponse(BaseModel):
     codechef_rating: Optional[int]
     codeforces_rating: Optional[int]
     resume_url: Optional[str]
-    certification_urls: Optional[List]
+    certification_urls: Optional[str] = None
     profile_completed: bool
     readiness_score: float
     skills: List[SkillResponse] = []

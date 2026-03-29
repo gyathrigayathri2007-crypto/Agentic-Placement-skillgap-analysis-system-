@@ -31,6 +31,30 @@ def chat(
 
     return {"response": response_text}
 
+
+# ── NEW: Get all recommendations for logged-in student ────────
+@router.get("/recommendations/me")
+def get_my_recommendations(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_student)
+):
+    recs = db.query(Recommendation).filter(
+        Recommendation.student_id == current_user.id
+    ).all()
+
+    result = []
+    for rec in recs:
+        company = db.query(Company).filter(Company.id == rec.company_id).first()
+        result.append({
+            "company_id":   rec.company_id,
+            "company_name": company.name if company else "Unknown",
+            "roadmap":      rec.roadmap,
+        })
+
+    return result
+
+
+# ── Get recommendation for one specific company ───────────────
 @router.get("/recommendations/{company_id}")
 def get_company_recommendation(
     company_id: str,
@@ -51,14 +75,9 @@ def get_company_recommendation(
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
 
-    eligibility = db.query(EligibilityResult).filter(
-        EligibilityResult.student_id == current_user.id,
-        EligibilityResult.company_id == company_id
-    ).first()
-
-    student_skills = [s.skill_name for s in student.skills]
+    student_skills  = [s.skill_name for s in student.skills]
     required_skills = company.required_skills or []
-    gap_skills = [s for s in required_skills if s not in student_skills]
+    gap_skills      = [s for s in required_skills if s not in student_skills]
 
     roadmap = get_recommendation(
         student_skills=student_skills,
