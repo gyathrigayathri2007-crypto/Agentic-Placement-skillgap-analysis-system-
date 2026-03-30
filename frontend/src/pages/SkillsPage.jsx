@@ -292,23 +292,6 @@ const ALL_SKILLS = [
     ]
   },
 ]
-const handleMarkLearned = async (skillName) => {
-  setMarkingSkill(skillName)
-  try {
-    await api.patch('/students/skills/learned', { skill_name: skillName })
-    setMarkedSkills(prev => new Set([...prev, skillName.toLowerCase()]))
-    // Optimistically update local profile state
-    setProfile(prev => ({
-      ...prev,
-      skills: [...(prev?.skills || []), { skill_name: skillName }]
-    }))
-    setPopup(null)
-  } catch (err) {
-    alert('Could not save skill. Try again.')
-  } finally {
-    setMarkingSkill(null)
-  }
-}
 
 const IMPORTANCE_CONFIG = {
   Critical: { color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
@@ -333,7 +316,7 @@ const CATEGORY_COLORS = {
 }
 
 // ── SKILL POPUP ───────────────────────────────────────────────
-function SkillPopup({ skill, onClose, companyCount }) {
+function SkillPopup({ skill, onClose, companyCount, mySkillNames, markingSkill, onMarkLearned }) {
   const imp = IMPORTANCE_CONFIG[skill.importance] || IMPORTANCE_CONFIG.Medium
   const catColor = CATEGORY_COLORS[skill.category] || '#6b7280'
 
@@ -523,8 +506,24 @@ export default function SkillsPage() {
   const [popup,      setPopup]      = useState(null)
   const [search,     setSearch]     = useState('')
   const [filterCat,  setFilterCat]  = useState('All')
- 
 
+  const handleMarkLearned = async (skillName) => {
+    setMarkingSkill(skillName)
+    try {
+      await api.patch('/students/skills/learned', { skill_name: skillName })
+      setMarkedSkills(prev => new Set([...prev, skillName.toLowerCase()]))
+      // Optimistically update local profile state
+      setProfile(prev => ({
+        ...prev,
+        skills: [...(prev?.skills || []), { skill_name: skillName }]
+      }))
+      setPopup(null)
+    } catch (err) {
+      alert('Could not save skill. Try again.')
+    } finally {
+      setMarkingSkill(null)
+    }
+  }
 
   useEffect(() => {
     Promise.all([
@@ -845,6 +844,9 @@ export default function SkillsPage() {
             skill={popup}
             companyCount={popup.companyCount || 0}
             onClose={() => setPopup(null)}
+            mySkillNames={mySkillNames}
+            markingSkill={markingSkill}
+            onMarkLearned={handleMarkLearned}
           />
         )}
 

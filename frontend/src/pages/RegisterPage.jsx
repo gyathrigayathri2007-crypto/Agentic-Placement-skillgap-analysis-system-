@@ -52,13 +52,10 @@ export default function RegisterPage() {
         role
       })
       setSuccess(true)
-      // Cookie is already set — go straight to the right page
+      // Always redirect to login — AuthContext.login() handles
+      // the smart redirect to /setup or /dashboard based on profile completion
       setTimeout(() => {
-        if (res.data.role === 'faculty') {
-          navigate('/faculty')
-        } else {
-          navigate('/setup')
-        }
+        navigate('/login')
       }, 1200)
     } catch (err) {
       setError(err.response?.data?.detail || 'Registration failed. Please try again.')
@@ -108,7 +105,7 @@ export default function RegisterPage() {
           </div>
 
           {error   && <div className="alert alert-error"   style={{ marginBottom:14 }}>{error}</div>}
-          {success && <div className="alert alert-success" style={{ marginBottom:14 }}>Account created! Redirecting…</div>}
+          {success && <div className="alert alert-success" style={{ marginBottom:14 }}>Account created! Redirecting to login…</div>}
 
           <form onSubmit={handleSubmit}>
             <div style={{ display:'flex', gap:10, marginBottom:14 }}>

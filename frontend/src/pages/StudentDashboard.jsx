@@ -248,6 +248,22 @@ export default function StudentDashboard() {
   const readiness = data.readiness_score || student.readiness_score || 0
   const isAiAnalyzing = readiness === 0 && companies.length === 0
 
+  if (isAiAnalyzing) {
+    return (
+      <div className="app-shell">
+        <Sidebar role="student" />
+        <main className="main-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '80vh', gap: 24 }}>
+          <div className="spinner" style={{ width: 44, height: 44, border: '4px solid var(--border)', borderTopColor: 'var(--brand)' }}></div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 22, fontWeight: 700, color: 'var(--text-1)', marginBottom: 8 }}>Analyzing your skills...</div>
+            <div style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6 }}>Our Agentic AI is evaluating your profile, matching you with companies,<br/>and generating personalized learning roadmaps.</div>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+
   const eligible     = companies.filter(c => c.status === 'eligible')
   const nearEligible = companies.filter(c => c.status === 'near_eligible')
   const notEligible  = companies.filter(c => c.status === 'not_eligible')
@@ -286,17 +302,6 @@ export default function StudentDashboard() {
     <div className="app-shell">
       <Sidebar role="student" />
       <main className="main-content">
-
-        {/* AI Analyzing Banner */}
-        {isAiAnalyzing && (
-          <div style={{ background: 'var(--brand-light)', border: '1px solid #c5d9f5', borderRadius: 10, padding: '14px 18px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div className="spinner" style={{ width: 18, height: 18, flexShrink: 0 }} />
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--brand)' }}>🤖 AI analysis is running in the background</div>
-              <div style={{ fontSize: 12, color: '#2a5a8c', marginTop: 2 }}>Your eligibility results and roadmaps will appear here automatically in 10–30 seconds. This page refreshes itself.</div>
-            </div>
-          </div>
-        )}
 
         {/* Header */}
         <div style={{ marginBottom: 28 }}>
